@@ -1,0 +1,89 @@
+Option Explicit
+
+Sub VBAHomework()
+
+Dim sheet As Worksheet
+For Each sheet In Worksheets
+    sheet.Activate
+    
+            Dim ticker As String
+            Dim vol As Double
+            Dim TickerList As Integer
+            Dim TickerList2 As Integer
+            
+            Dim YearlyChange As Double
+            Dim PercentChange As Double
+            Dim FirstDayOpen As Double
+            
+            Dim i As Long
+            Dim n As Long
+            
+            vol = 0
+            TickerList = 2
+            ticker = Range("A2").Value
+            FirstDayOpen = Range("C2").Value
+            n = Cells(Rows.Count, 1).End(xlUp).Row
+            
+            For i = 2 To n
+            
+                If Cells(i, 1).Value = ticker Then
+                     vol = vol + Cells(i, 7).Value
+                     
+                Else
+                    
+                    Range("I" & TickerList).Value = ticker
+                    Range("L" & TickerList).Value = vol
+                    Range("J" & TickerList).Value = Cells(i - 1, 6) - FirstDayOpen
+                        If FirstDayOpen = 0 Then
+                            Cells(TickerList, 11) = 0
+                        Else
+                            Cells(TickerList, 11).Value = Cells(TickerList, 10) / FirstDayOpen
+                        End If
+                        
+                    ticker = Cells(i, 1).Value
+                    FirstDayOpen = Cells(i, 3).Value
+                    TickerList = TickerList + 1
+                    vol = Cells(i, 7).Value
+                     
+                End If
+            
+            Next i
+            
+            Cells(2, 17) = Application.Max(Range(Cells(2, 11), Cells(TickerList, 11)))
+            Cells(3, 17) = Application.Min(Range(Cells(2, 11), Cells(TickerList, 11)))
+            Cells(4, 17) = Application.Max(Range(Cells(2, 12), Cells(TickerList, 12)))
+            
+            TickerList2 = Application.Match(Cells(2, 17), Range(Cells(2, 11), Cells(TickerList, 11)), 0) + 1
+            Cells(2, 16) = Cells(TickerList2, 9)
+            
+            TickerList2 = Application.Match(Cells(3, 17), Range(Cells(2, 11), Cells(TickerList, 11)), 0) + 1
+            Cells(3, 16) = Cells(TickerList2, 9)
+            
+            TickerList2 = Application.Match(Cells(4, 17), Range(Cells(2, 12), Cells(TickerList, 12)), 0) + 1
+            Cells(4, 16) = Cells(TickerList2, 9)
+            
+            'Format
+            
+            Dim j As Long
+            
+            For j = 2 To n
+                If Cells(j, 10).Value >= 0 Then
+                    Cells(j, 10).Interior.Color = RGB(0, 255, 0)
+                Else
+                    Cells(j, 10).Interior.Color = RGB(255, 0, 0)
+                End If
+                Next j
+            
+            Range("I1").Value = "Ticker"
+            Range("J1").Value = "Yearly Change"
+            Range("K1").Value = "Percentage Change"
+            Range("L1").Value = "Total Stock Volume"
+            Range("O2").Value = "Greatest % Increase"
+            Range("O3").Value = "Greatest % Decrease"
+            Range("O4").Value = "Greatest Total Volume"
+            Range("P1").Value = "Ticker"
+            Range("Q1").Value = "Value"
+
+Next sheet
+
+End Sub
